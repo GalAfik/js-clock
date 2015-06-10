@@ -12,7 +12,7 @@
 			function serverRequest() {
 				$.ajax({
         type: "POST",
-        data:{ timezone: new Date().getTimezoneOffset() }, // offset in minutes from UTC
+        data:"", // offset in minutes from UTC
         url: "get-time.php",
         success: function(result){
                 today = result; //returned as "H:i:s A" example: (11:24:04 AM)
