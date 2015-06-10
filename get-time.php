@@ -8,7 +8,7 @@
 	$sign = ($clientoffset >= 0) ? '-': '+';
 	$offsetinhours =  $sign.sprintf("%02d", ($clientoffset/60)).":".sprintf("%02d",($clientoffset%60));
 	$timezone = getTimezone($offsetinhours);
-	date_default_timezone_set("Pacific/Honolulu");
+	date_default_timezone_set($timezone);
 
 	// checks for DST and return H - 1 if it is
 	if(date('I')){
