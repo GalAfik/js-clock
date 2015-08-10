@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- jQuery -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script>
+			// Set vars: today - today's time,
+			//           A     - AM/PM,
+			//           h     - hours,
+			//           m     - minutes,
+			//           s     - seconds
+			var today = A = "";
+			var h = m = s = 59;
+
+			// Request time from server and set h, m, s, and A
+			function serverRequest() {
+				$.ajax({
+					type: 'POST',
+					data: {
+						// Offset in minutes from UTC.
+						timezone: new Date().getTimezoneOffset()
+					},
+					url: "get-time.php",
+					success: function(today) {
+						// result as "H:i:s A" example: (11:24:04 AM)
+						h = parseInt(today.substring(0, 2), 10);
+						m = parseInt(today.substring(3, 5), 10);
+						s = parseInt(today.substring(6, 8), 10);
+						A = today.substring(9, 11);
+					}
+				});
+			}
+
+			// Pad minutes and seconds for display.
+			function checkTime(i) {
+				// Add zero in front of numbers < 10.
+				if (i < 10) {
+					i = '0' + i;
+				}
+				return i;
+			}
+
+			// Update the current time and display in #txt.
+			function updateTime() {
+				if (s !== 59) {
+					s++;
+				} else if (m !== 59) {
+					s = 0;
+					m++;
+				} else {
+					// Request server time at the end of each hour
+					serverRequest();
+				}
+
+				// Set Loading tag while the server fetches a timestamp
+				if (h === 59) {
+					$('#txt').html("Loading...");
+				} else {
+					$('#txt').html(h + ':' + checkTime(m) + ':' + checkTime(s) + ' ' + A);
+				}
+				
+				// Update the time every second (minus calculation time)
+				var t = setTimeout(function() {
+					updateTime();
+				}, 999);
+			}
+
+		</script>
+	</head>
+	<body onload="updateTime()">
+		<!-- Blank div for clock display -->
+		<div id="txt"></div>
+	</body>
+</html>
